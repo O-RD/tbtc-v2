@@ -18,7 +18,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   )
 
   // 60 seconds for Goerli. 48 hours otherwise.
-  const GOVERNANCE_DELAY = hre.network.name === "goerli" ? 60 : 172800
+  const GOVERNANCE_DELAY = 60
 
   const bridgeGovernance = await deploy("BridgeGovernance", {
     contract: "BridgeGovernance",

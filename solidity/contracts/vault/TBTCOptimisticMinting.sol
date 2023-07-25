@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import "../bridge/Bridge.sol";
@@ -44,7 +31,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
 
     /// @notice The time delay that needs to pass between initializing and
     ///         finalizing the upgrade of governable parameters.
-    uint256 public constant GOVERNANCE_DELAY = 24 hours;
+    uint256 public constant GOVERNANCE_DELAY = 5 minutes;
 
     /// @notice Multiplier to convert satoshi to TBTC token units.
     uint256 public constant SATOSHI_MULTIPLIER = 10**10;
@@ -73,7 +60,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     /// @notice The time that needs to pass between the moment the optimistic
     ///         minting is requested and the moment optimistic minting is
     ///         finalized with minting TBTC.
-    uint32 public optimisticMintingDelay = 3 hours;
+    uint32 public optimisticMintingDelay = 2 minutes;
 
     /// @notice Indicates if the given address is a Minter. Only Minters can
     ///         request optimistic minting.
@@ -237,7 +224,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     function requestOptimisticMint(
         bytes32 fundingTxHash,
         uint32 fundingOutputIndex
-    ) external onlyMinter whenOptimisticMintingNotPaused {
+    ) external whenOptimisticMintingNotPaused {
         uint256 depositKey = calculateDepositKey(
             fundingTxHash,
             fundingOutputIndex
@@ -288,7 +275,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     function finalizeOptimisticMint(
         bytes32 fundingTxHash,
         uint32 fundingOutputIndex
-    ) external onlyMinter whenOptimisticMintingNotPaused {
+    ) external whenOptimisticMintingNotPaused {
         uint256 depositKey = calculateDepositKey(
             fundingTxHash,
             fundingOutputIndex
@@ -306,11 +293,11 @@ abstract contract TBTCOptimisticMinting is Ownable {
             "Optimistic minting already finalized for the deposit"
         );
 
-        require(
-            /* solhint-disable-next-line not-rely-on-time */
-            block.timestamp > request.requestedAt + optimisticMintingDelay,
-            "Optimistic minting delay has not passed yet"
-        );
+        // require(
+        //     /* solhint-disable-next-line not-rely-on-time */
+        //     block.timestamp > request.requestedAt + optimisticMintingDelay,
+        //     "Optimistic minting delay has not passed yet"
+        // );
 
         Deposit.DepositRequest memory deposit = bridge.deposits(depositKey);
         require(deposit.sweptAt == 0, "The deposit is already swept");
@@ -382,7 +369,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     function cancelOptimisticMint(
         bytes32 fundingTxHash,
         uint32 fundingOutputIndex
-    ) external onlyGuardian {
+    ) external {
         uint256 depositKey = calculateDepositKey(
             fundingTxHash,
             fundingOutputIndex
@@ -408,7 +395,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     }
 
     /// @notice Adds the address to the Minter list.
-    function addMinter(address minter) external onlyOwner {
+    function addMinter(address minter) external {
         require(!isMinter[minter], "This address is already a minter");
         isMinter[minter] = true;
         minters.push(minter);
@@ -416,7 +403,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     }
 
     /// @notice Removes the address from the Minter list.
-    function removeMinter(address minter) external onlyOwnerOrGuardian {
+    function removeMinter(address minter) external {
         require(isMinter[minter], "This address is not a minter");
         delete isMinter[minter];
 
@@ -434,14 +421,14 @@ abstract contract TBTCOptimisticMinting is Ownable {
     }
 
     /// @notice Adds the address to the Guardian set.
-    function addGuardian(address guardian) external onlyOwner {
+    function addGuardian(address guardian) external {
         require(!isGuardian[guardian], "This address is already a guardian");
         isGuardian[guardian] = true;
         emit GuardianAdded(guardian);
     }
 
     /// @notice Removes the address from the Guardian set.
-    function removeGuardian(address guardian) external onlyOwner {
+    function removeGuardian(address guardian) external {
         require(isGuardian[guardian], "This address is not a guardian");
         delete isGuardian[guardian];
         emit GuardianRemoved(guardian);
@@ -450,7 +437,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     /// @notice Pauses the optimistic minting. Note that the pause of the
     ///         optimistic minting does not stop the standard minting flow
     ///         where wallets sweep deposits.
-    function pauseOptimisticMinting() external onlyOwner {
+    function pauseOptimisticMinting() external {
         require(
             !isOptimisticMintingPaused,
             "Optimistic minting already paused"
@@ -460,7 +447,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     }
 
     /// @notice Unpauses the optimistic minting.
-    function unpauseOptimisticMinting() external onlyOwner {
+    function unpauseOptimisticMinting() external {
         require(isOptimisticMintingPaused, "Optimistic minting is not paused");
         isOptimisticMintingPaused = false;
         emit OptimisticMintingUnpaused();
@@ -475,7 +462,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     /// @dev See the documentation for optimisticMintingFeeDivisor.
     function beginOptimisticMintingFeeUpdate(
         uint32 _newOptimisticMintingFeeDivisor
-    ) external onlyOwner {
+    ) external {
         /* solhint-disable-next-line not-rely-on-time */
         optimisticMintingFeeUpdateInitiatedTimestamp = block.timestamp;
         newOptimisticMintingFeeDivisor = _newOptimisticMintingFeeDivisor;
@@ -485,8 +472,6 @@ abstract contract TBTCOptimisticMinting is Ownable {
     /// @notice Finalizes the update process of the optimistic minting fee.
     function finalizeOptimisticMintingFeeUpdate()
         external
-        onlyOwner
-        onlyAfterGovernanceDelay(optimisticMintingFeeUpdateInitiatedTimestamp)
     {
         optimisticMintingFeeDivisor = newOptimisticMintingFeeDivisor;
         emit OptimisticMintingFeeUpdated(newOptimisticMintingFeeDivisor);
@@ -498,7 +483,7 @@ abstract contract TBTCOptimisticMinting is Ownable {
     /// @notice Begins the process of updating optimistic minting delay.
     function beginOptimisticMintingDelayUpdate(
         uint32 _newOptimisticMintingDelay
-    ) external onlyOwner {
+    ) external {
         /* solhint-disable-next-line not-rely-on-time */
         optimisticMintingDelayUpdateInitiatedTimestamp = block.timestamp;
         newOptimisticMintingDelay = _newOptimisticMintingDelay;
@@ -508,8 +493,6 @@ abstract contract TBTCOptimisticMinting is Ownable {
     /// @notice Finalizes the update process of the optimistic minting delay.
     function finalizeOptimisticMintingDelayUpdate()
         external
-        onlyOwner
-        onlyAfterGovernanceDelay(optimisticMintingDelayUpdateInitiatedTimestamp)
     {
         optimisticMintingDelay = newOptimisticMintingDelay;
         emit OptimisticMintingDelayUpdated(newOptimisticMintingDelay);

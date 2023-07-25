@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import {IWalletRegistry as EcdsaWalletRegistry} from "@keep-network/ecdsa/contracts/api/IWalletRegistry.sol";

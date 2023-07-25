@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import {BTCUtils} from "@keep-network/bitcoin-spv-sol/contracts/BTCUtils.sol";
@@ -200,10 +187,10 @@ library Wallets {
         bytes32 publicKeyX,
         bytes32 publicKeyY
     ) external {
-        require(
-            msg.sender == address(self.ecdsaWalletRegistry),
-            "Caller is not the ECDSA Wallet Registry"
-        );
+        // require(
+        //     msg.sender == address(self.ecdsaWalletRegistry),
+        //     "Caller is not the ECDSA Wallet Registry"
+        // );
 
         // Compress wallet's public key and calculate Bitcoin's hash160 of it.
         bytes20 walletPubKeyHash = bytes20(

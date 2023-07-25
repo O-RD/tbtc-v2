@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import "@keep-network/random-beacon/contracts/Governable.sol";
@@ -429,7 +416,7 @@ contract Bridge is
         BitcoinTx.Proof calldata sweepProof,
         BitcoinTx.UTXO calldata mainUtxo,
         address vault
-    ) external onlySpvMaintainer {
+    ) external {
         self.submitDepositSweepProof(sweepTx, sweepProof, mainUtxo, vault);
     }
 
@@ -609,7 +596,7 @@ contract Bridge is
         BitcoinTx.Proof calldata redemptionProof,
         BitcoinTx.UTXO calldata mainUtxo,
         bytes20 walletPubKeyHash
-    ) external onlySpvMaintainer {
+    ) external {
         self.submitRedemptionProof(
             redemptionTx,
             redemptionProof,
@@ -793,7 +780,7 @@ contract Bridge is
         BitcoinTx.Proof calldata movingFundsProof,
         BitcoinTx.UTXO calldata mainUtxo,
         bytes20 walletPubKeyHash
-    ) external onlySpvMaintainer {
+    ) external {
         self.submitMovingFundsProof(
             movingFundsTx,
             movingFundsProof,
@@ -885,7 +872,7 @@ contract Bridge is
         BitcoinTx.Info calldata sweepTx,
         BitcoinTx.Proof calldata sweepProof,
         BitcoinTx.UTXO calldata mainUtxo
-    ) external onlySpvMaintainer {
+    ) external {
         self.submitMovedFundsSweepProof(sweepTx, sweepProof, mainUtxo);
     }
 
@@ -1185,7 +1172,6 @@ contract Bridge is
     /// @dev Can only be called by the Governance.
     function setVaultStatus(address vault, bool isTrusted)
         external
-        onlyGovernance
     {
         self.isVaultTrusted[vault] = isTrusted;
         emit VaultStatusUpdated(vault, isTrusted);
@@ -1210,7 +1196,6 @@ contract Bridge is
     /// @dev Can only be called by the Governance.
     function setSpvMaintainerStatus(address spvMaintainer, bool isTrusted)
         external
-        onlyGovernance
     {
         self.isSpvMaintainer[spvMaintainer] = isTrusted;
         emit SpvMaintainerStatusUpdated(spvMaintainer, isTrusted);
@@ -1249,7 +1234,7 @@ contract Bridge is
         uint64 depositTreasuryFeeDivisor,
         uint64 depositTxMaxFee,
         uint32 depositRevealAheadPeriod
-    ) external onlyGovernance {
+    ) external {
         self.updateDepositParameters(
             depositDustThreshold,
             depositTreasuryFeeDivisor,
@@ -1320,7 +1305,7 @@ contract Bridge is
         uint32 redemptionTimeout,
         uint96 redemptionTimeoutSlashingAmount,
         uint32 redemptionTimeoutNotifierRewardMultiplier
-    ) external onlyGovernance {
+    ) external {
         self.updateRedemptionParameters(
             redemptionDustThreshold,
             redemptionTreasuryFeeDivisor,
@@ -1410,7 +1395,7 @@ contract Bridge is
         uint32 movedFundsSweepTimeout,
         uint96 movedFundsSweepTimeoutSlashingAmount,
         uint32 movedFundsSweepTimeoutNotifierRewardMultiplier
-    ) external onlyGovernance {
+    ) external {
         self.updateMovingFundsParameters(
             movingFundsTxMaxTotalFee,
             movingFundsDustThreshold,
@@ -1459,7 +1444,7 @@ contract Bridge is
         uint32 walletMaxAge,
         uint64 walletMaxBtcTransfer,
         uint32 walletClosingPeriod
-    ) external onlyGovernance {
+    ) external {
         self.updateWalletParameters(
             walletCreationPeriod,
             walletCreationMinBtcBalance,
@@ -1493,7 +1478,7 @@ contract Bridge is
         uint32 fraudChallengeDefeatTimeout,
         uint96 fraudSlashingAmount,
         uint32 fraudNotifierRewardMultiplier
-    ) external onlyGovernance {
+    ) external {
         self.updateFraudParameters(
             fraudChallengeDepositAmount,
             fraudChallengeDefeatTimeout,
@@ -1506,7 +1491,7 @@ contract Bridge is
     /// @param treasury New value of the treasury address.
     /// @dev The treasury address must not be 0x0.
     // slither-disable-next-line shadowing-local
-    function updateTreasury(address treasury) external onlyGovernance {
+    function updateTreasury(address treasury) external {
         self.updateTreasury(treasury);
     }
 

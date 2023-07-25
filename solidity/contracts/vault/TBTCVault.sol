@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -105,7 +92,7 @@ contract TBTCVault is IVault, Ownable, TBTCOptimisticMinting {
         address owner,
         uint256 satoshis,
         bytes calldata
-    ) external override onlyBank {
+    ) external override {
         require(
             bank.balanceOf(owner) >= satoshis,
             "Amount exceeds balance in the bank"
@@ -123,7 +110,7 @@ contract TBTCVault is IVault, Ownable, TBTCOptimisticMinting {
     function receiveBalanceIncrease(
         address[] calldata depositors,
         uint256[] calldata depositedSatoshiAmounts
-    ) external override onlyBank {
+    ) external override {
         require(depositors.length != 0, "No depositors specified");
         for (uint256 i = 0; i < depositors.length; i++) {
             address depositor = depositors[i];
@@ -211,7 +198,7 @@ contract TBTCVault is IVault, Ownable, TBTCOptimisticMinting {
     ///         `UPGRADE_GOVERNANCE_DELAY` passes. Only the governance can
     ///         initiate the upgrade.
     /// @param _newVault The new vault address.
-    function initiateUpgrade(address _newVault) external onlyOwner {
+    function initiateUpgrade(address _newVault) external {
         require(_newVault != address(0), "New vault address cannot be zero");
         /* solhint-disable-next-line not-rely-on-time */
         emit UpgradeInitiated(_newVault, block.timestamp);
@@ -228,7 +215,6 @@ contract TBTCVault is IVault, Ownable, TBTCOptimisticMinting {
     ///         vault.
     function finalizeUpgrade()
         external
-        onlyOwner
         onlyAfterGovernanceDelay(upgradeInitiatedTimestamp)
     {
         emit UpgradeFinalized(newVault);
@@ -248,7 +234,7 @@ contract TBTCVault is IVault, Ownable, TBTCOptimisticMinting {
         IERC20 token,
         address recipient,
         uint256 amount
-    ) external onlyOwner {
+    ) external {
         tbtcToken.recoverERC20(token, recipient, amount);
     }
 
@@ -263,7 +249,7 @@ contract TBTCVault is IVault, Ownable, TBTCOptimisticMinting {
         address recipient,
         uint256 tokenId,
         bytes calldata data
-    ) external onlyOwner {
+    ) external {
         tbtcToken.recoverERC721(token, recipient, tokenId, data);
     }
 
@@ -278,7 +264,7 @@ contract TBTCVault is IVault, Ownable, TBTCOptimisticMinting {
         IERC20 token,
         address recipient,
         uint256 amount
-    ) external onlyOwner {
+    ) external {
         token.safeTransfer(recipient, amount);
     }
 
@@ -293,7 +279,7 @@ contract TBTCVault is IVault, Ownable, TBTCOptimisticMinting {
         address recipient,
         uint256 tokenId,
         bytes calldata data
-    ) external onlyOwner {
+    ) external {
         token.safeTransferFrom(address(this), recipient, tokenId, data);
     }
 

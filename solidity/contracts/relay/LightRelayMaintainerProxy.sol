@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -83,7 +70,7 @@ contract LightRelayMaintainerProxy is Ownable, Reimbursable {
     ///      check the status of the `LightRelay`. The Governance implementation
     ///      needs to ensure all requirements for the upgrade are satisfied
     ///      before executing this function.
-    function updateLightRelay(ILightRelay _lightRelay) external onlyOwner {
+    function updateLightRelay(ILightRelay _lightRelay) external {
         require(
             address(_lightRelay) != address(0),
             "New light relay must not be zero address"
@@ -98,7 +85,7 @@ contract LightRelayMaintainerProxy is Ownable, Reimbursable {
     ///         already authorized.
     /// @dev The function does not implement any governance delay.
     /// @param maintainer The address of the maintainer to be authorized.
-    function authorize(address maintainer) external onlyOwner {
+    function authorize(address maintainer) external {
         require(!isAuthorized[maintainer], "Maintainer is already authorized");
 
         isAuthorized[maintainer] = true;
@@ -110,7 +97,7 @@ contract LightRelayMaintainerProxy is Ownable, Reimbursable {
     ///         authorized.
     /// @dev The function does not implement any governance delay.
     /// @param maintainer The address of the maintainer to be deauthorized.
-    function deauthorize(address maintainer) external onlyOwner {
+    function deauthorize(address maintainer) external {
         require(isAuthorized[maintainer], "Maintainer is not authorized");
 
         isAuthorized[maintainer] = false;
@@ -124,7 +111,6 @@ contract LightRelayMaintainerProxy is Ownable, Reimbursable {
     /// @param newRetargetGasOffset New retarget gas offset.
     function updateRetargetGasOffset(uint256 newRetargetGasOffset)
         external
-        onlyOwner
     {
         retargetGasOffset = newRetargetGasOffset;
         emit RetargetGasOffsetUpdated(retargetGasOffset);
@@ -134,7 +120,7 @@ contract LightRelayMaintainerProxy is Ownable, Reimbursable {
     ///         transaction cost. Can only be called by an authorized relay
     ///         maintainer.
     /// @dev See `LightRelay.retarget` function documentation.
-    function retarget(bytes memory headers) external onlyRelayMaintainer {
+    function retarget(bytes memory headers) external {
         uint256 gasStart = gasleft();
 
         lightRelay.retarget(headers);

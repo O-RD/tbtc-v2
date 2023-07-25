@@ -37,7 +37,8 @@
     "@keep-network/tbtc": "development",
     "@openzeppelin/contracts": "^4.8.1",
     "@openzeppelin/contracts-upgradeable": "^4.8.1",
-    "@thesis/solidity-contracts": "github:thesis/solidity-contracts#4985bcf"
+    "@thesis/solidity-contracts": "github:thesis/solidity-contracts#4985bcf",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
     "@defi-wonderland/smock": "^2.3.4",

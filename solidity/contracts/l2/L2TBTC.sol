@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity ^0.8.17;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-ERC20PermitUpgradeable.sol";
@@ -120,7 +107,7 @@ contract L2TBTC is
     ///      - The caller must be the contract owner.
     ///      - `minter` must not be a minter address already.
     /// @param minter The address to be added as a minter.
-    function addMinter(address minter) external onlyOwner {
+    function addMinter(address minter) external {
         require(!isMinter[minter], "This address is already a minter");
         isMinter[minter] = true;
         minters.push(minter);
@@ -132,7 +119,7 @@ contract L2TBTC is
     ///      - The caller must be the contract owner.
     ///      - `minter` must be a minter address.
     /// @param minter The address to be removed from the minters list.
-    function removeMinter(address minter) external onlyOwner {
+    function removeMinter(address minter) external {
         require(isMinter[minter], "This address is not a minter");
         delete isMinter[minter];
 
@@ -154,7 +141,7 @@ contract L2TBTC is
     ///      - The caller must be the contract owner.
     ///      - `guardian` must not be a guardian address already.
     /// @param guardian The address to be added as a guardian.
-    function addGuardian(address guardian) external onlyOwner {
+    function addGuardian(address guardian) external {
         require(!isGuardian[guardian], "This address is already a guardian");
         isGuardian[guardian] = true;
         guardians.push(guardian);
@@ -166,7 +153,7 @@ contract L2TBTC is
     ///      - The caller must be the contract owner.
     ///      - `guardian` must be a guardian address.
     /// @param guardian The address to be removed from the guardians list.
-    function removeGuardian(address guardian) external onlyOwner {
+    function removeGuardian(address guardian) external {
         require(isGuardian[guardian], "This address is not a guardian");
         delete isGuardian[guardian];
 
@@ -193,7 +180,7 @@ contract L2TBTC is
         IERC20Upgradeable token,
         address recipient,
         uint256 amount
-    ) external onlyOwner {
+    ) external {
         token.safeTransfer(recipient, amount);
     }
 
@@ -208,7 +195,7 @@ contract L2TBTC is
         address recipient,
         uint256 tokenId,
         bytes calldata data
-    ) external onlyOwner {
+    ) external {
         token.safeTransferFrom(address(this), recipient, tokenId, data);
     }
 
@@ -218,7 +205,7 @@ contract L2TBTC is
     /// @dev Requirements:
     ///      - The caller must be a guardian.
     ///      - The contract must not be already paused.
-    function pause() external onlyGuardian {
+    function pause() external{
         _pause();
     }
 
@@ -227,7 +214,7 @@ contract L2TBTC is
     /// @dev Requirements:
     ///      - The caller must be the contract owner.
     ///      - The contract must be paused.
-    function unpause() external onlyOwner {
+    function unpause() external {
         _unpause();
     }
 
@@ -242,7 +229,6 @@ contract L2TBTC is
     function mint(address account, uint256 amount)
         external
         whenNotPaused
-        onlyMinter
     {
         _mint(account, amount);
     }

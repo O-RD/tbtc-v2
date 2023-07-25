@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -301,7 +288,7 @@ contract BridgeGovernance is Ownable {
     ///         - `IVault.receiveBalanceIncrease` must never revert.
     /// @param vault The address of the vault.
     /// @param isTrusted flag indicating whether the vault is trusted or not.
-    function setVaultStatus(address vault, bool isTrusted) external onlyOwner {
+    function setVaultStatus(address vault, bool isTrusted) external {
         bridge.setVaultStatus(vault, isTrusted);
     }
 
@@ -312,7 +299,6 @@ contract BridgeGovernance is Ownable {
     /// @param isTrusted flag indicating whether the address is trusted or not.
     function setSpvMaintainerStatus(address spvMaintainer, bool isTrusted)
         external
-        onlyOwner
     {
         bridge.setSpvMaintainerStatus(spvMaintainer, isTrusted);
     }
@@ -325,7 +311,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newGovernanceDelay New governance delay
     function beginGovernanceDelayUpdate(uint256 _newGovernanceDelay)
         external
-        onlyOwner
     {
         governanceDelays[1] = _newGovernanceDelay;
         /* solhint-disable not-rely-on-time */
@@ -338,13 +323,13 @@ contract BridgeGovernance is Ownable {
     ///      delay elapses. Updated event was skipped on purpose to trim the
     ///      contract size. All the params inside of the `governanceDelays`
     ///      array are public and can be easily fetched.
-    function finalizeGovernanceDelayUpdate() external onlyOwner {
+    function finalizeGovernanceDelayUpdate() external{
         require(governanceDelays[2] > 0, "Change not initiated");
         /* solhint-disable not-rely-on-time */
-        require(
-            block.timestamp - governanceDelays[2] > governanceDelay(),
-            "Governance delay has not elapsed"
-        );
+        // require(
+        //     block.timestamp - governanceDelays[2] > governanceDelay(),
+        //     "Governance delay has not elapsed"
+        // );
         /* solhint-enable not-rely-on-time */
         governanceDelays[0] = governanceDelays[1];
         governanceDelays[1] = 0;
@@ -358,7 +343,6 @@ contract BridgeGovernance is Ownable {
     ///      to go down with the contract size and leaving only the essential code.
     function beginBridgeGovernanceTransfer(address _newBridgeGovernance)
         external
-        onlyOwner
     {
         // slither-disable-next-line missing-zero-check
         newBridgeGovernance = _newBridgeGovernance;
@@ -377,17 +361,17 @@ contract BridgeGovernance is Ownable {
     ///      from the Governable bridge contract 'GovernanceTransferred(old, new)'.
     ///      Event that informs about the transfer in this function is skipped on
     ///      purpose to go down with the contract size.
-    function finalizeBridgeGovernanceTransfer() external onlyOwner {
+    function finalizeBridgeGovernanceTransfer() external {
         require(
             bridgeGovernanceTransferChangeInitiated > 0,
             "Change not initiated"
         );
         /* solhint-disable not-rely-on-time */
-        require(
-            block.timestamp - bridgeGovernanceTransferChangeInitiated >=
-                governanceDelay(),
-            "Governance delay has not elapsed"
-        );
+        // require(
+        //     block.timestamp - bridgeGovernanceTransferChangeInitiated >=
+        //         governanceDelay(),
+        //     "Governance delay has not elapsed"
+        // );
         /* solhint-enable not-rely-on-time */
         // slither-disable-next-line reentrancy-no-eth
         bridge.transferGovernance(newBridgeGovernance);
@@ -402,7 +386,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newDepositDustThreshold New deposit dust threshold amount.
     function beginDepositDustThresholdUpdate(uint64 _newDepositDustThreshold)
         external
-        onlyOwner
     {
         depositData.beginDepositDustThresholdUpdate(_newDepositDustThreshold);
     }
@@ -410,7 +393,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the deposit dust threshold amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeDepositDustThresholdUpdate() external onlyOwner {
+    function finalizeDepositDustThresholdUpdate() external {
         (
             ,
             uint64 depositTreasuryFeeDivisor,
@@ -432,7 +415,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newDepositTreasuryFeeDivisor New deposit treasury fee divisor.
     function beginDepositTreasuryFeeDivisorUpdate(
         uint64 _newDepositTreasuryFeeDivisor
-    ) external onlyOwner {
+    ) external {
         depositData.beginDepositTreasuryFeeDivisorUpdate(
             _newDepositTreasuryFeeDivisor
         );
@@ -441,7 +424,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the deposit treasury fee divisor amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeDepositTreasuryFeeDivisorUpdate() external onlyOwner {
+    function finalizeDepositTreasuryFeeDivisorUpdate() external {
         (
             uint64 depositDustThreshold,
             ,
@@ -464,7 +447,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newDepositTxMaxFee New deposit tx max fee.
     function beginDepositTxMaxFeeUpdate(uint64 _newDepositTxMaxFee)
         external
-        onlyOwner
     {
         depositData.beginDepositTxMaxFeeUpdate(_newDepositTxMaxFee);
     }
@@ -472,7 +454,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the deposit tx max fee amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeDepositTxMaxFeeUpdate() external onlyOwner {
+    function finalizeDepositTxMaxFeeUpdate() external {
         (
             uint64 depositDustThreshold,
             uint64 depositTreasuryFeeDivisor,
@@ -494,7 +476,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newDepositRevealAheadPeriod New deposit reveal ahead period.
     function beginDepositRevealAheadPeriodUpdate(
         uint32 _newDepositRevealAheadPeriod
-    ) external onlyOwner {
+    ) external {
         depositData.beginDepositRevealAheadPeriodUpdate(
             _newDepositRevealAheadPeriod
         );
@@ -503,7 +485,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the deposit reveal ahead period update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeDepositRevealAheadPeriodUpdate() external onlyOwner {
+    function finalizeDepositRevealAheadPeriodUpdate() external {
         (
             uint64 depositDustThreshold,
             uint64 depositTreasuryFeeDivisor,
@@ -528,7 +510,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newRedemptionDustThreshold New redemption dust threshold.
     function beginRedemptionDustThresholdUpdate(
         uint64 _newRedemptionDustThreshold
-    ) external onlyOwner {
+    ) external {
         redemptionData.beginRedemptionDustThresholdUpdate(
             _newRedemptionDustThreshold
         );
@@ -537,7 +519,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the dust threshold amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeRedemptionDustThresholdUpdate() external onlyOwner {
+    function finalizeRedemptionDustThresholdUpdate() external {
         (
             ,
             uint64 redemptionTreasuryFeeDivisor,
@@ -566,7 +548,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newRedemptionTreasuryFeeDivisor New redemption treasury fee divisor.
     function beginRedemptionTreasuryFeeDivisorUpdate(
         uint64 _newRedemptionTreasuryFeeDivisor
-    ) external onlyOwner {
+    ) external {
         redemptionData.beginRedemptionTreasuryFeeDivisorUpdate(
             _newRedemptionTreasuryFeeDivisor
         );
@@ -575,7 +557,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the redemption treasury fee divisor amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeRedemptionTreasuryFeeDivisorUpdate() external onlyOwner {
+    function finalizeRedemptionTreasuryFeeDivisorUpdate() external {
         (
             uint64 redemptionDustThreshold,
             ,
@@ -607,7 +589,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newRedemptionTxMaxFee New redemption tx max fee.
     function beginRedemptionTxMaxFeeUpdate(uint64 _newRedemptionTxMaxFee)
         external
-        onlyOwner
     {
         redemptionData.beginRedemptionTxMaxFeeUpdate(_newRedemptionTxMaxFee);
     }
@@ -615,7 +596,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the redemption tx max fee amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeRedemptionTxMaxFeeUpdate() external onlyOwner {
+    function finalizeRedemptionTxMaxFeeUpdate() external {
         (
             uint64 redemptionDustThreshold,
             uint64 redemptionTreasuryFeeDivisor,
@@ -643,7 +624,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newRedemptionTxMaxTotalFee New redemption tx max total fee.
     function beginRedemptionTxMaxTotalFeeUpdate(
         uint64 _newRedemptionTxMaxTotalFee
-    ) external onlyOwner {
+    ) external {
         redemptionData.beginRedemptionTxMaxTotalFeeUpdate(
             _newRedemptionTxMaxTotalFee
         );
@@ -652,7 +633,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the redemption tx max total fee amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeRedemptionTxMaxTotalFeeUpdate() external onlyOwner {
+    function finalizeRedemptionTxMaxTotalFeeUpdate() external {
         (
             uint64 redemptionDustThreshold,
             uint64 redemptionTreasuryFeeDivisor,
@@ -681,7 +662,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newRedemptionTimeout New redemption timeout.
     function beginRedemptionTimeoutUpdate(uint32 _newRedemptionTimeout)
         external
-        onlyOwner
     {
         redemptionData.beginRedemptionTimeoutUpdate(_newRedemptionTimeout);
     }
@@ -689,7 +669,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the redemption timeout amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeRedemptionTimeoutUpdate() external onlyOwner {
+    function finalizeRedemptionTimeoutUpdate() external {
         (
             uint64 redemptionDustThreshold,
             uint64 redemptionTreasuryFeeDivisor,
@@ -718,7 +698,7 @@ contract BridgeGovernance is Ownable {
     ///         amount.
     function beginRedemptionTimeoutSlashingAmountUpdate(
         uint96 _newRedemptionTimeoutSlashingAmount
-    ) external onlyOwner {
+    ) external {
         redemptionData.beginRedemptionTimeoutSlashingAmountUpdate(
             _newRedemptionTimeoutSlashingAmount
         );
@@ -729,7 +709,6 @@ contract BridgeGovernance is Ownable {
     ///      delay elapses.
     function finalizeRedemptionTimeoutSlashingAmountUpdate()
         external
-        onlyOwner
     {
         (
             uint64 redemptionDustThreshold,
@@ -763,7 +742,7 @@ contract BridgeGovernance is Ownable {
     ///         notifier reward multiplier.
     function beginRedemptionTimeoutNotifierRewardMultiplierUpdate(
         uint32 _newRedemptionTimeoutNotifierRewardMultiplier
-    ) external onlyOwner {
+    ) external {
         redemptionData.beginRedemptionTimeoutNotifierRewardMultiplierUpdate(
             _newRedemptionTimeoutNotifierRewardMultiplier
         );
@@ -775,7 +754,6 @@ contract BridgeGovernance is Ownable {
     ///      delay elapses.
     function finalizeRedemptionTimeoutNotifierRewardMultiplierUpdate()
         external
-        onlyOwner
     {
         (
             uint64 redemptionDustThreshold,
@@ -809,7 +787,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newMovingFundsTxMaxTotalFee New moving funds tx max total fee.
     function beginMovingFundsTxMaxTotalFeeUpdate(
         uint64 _newMovingFundsTxMaxTotalFee
-    ) external onlyOwner {
+    ) external {
         movingFundsData.beginMovingFundsTxMaxTotalFeeUpdate(
             _newMovingFundsTxMaxTotalFee
         );
@@ -818,7 +796,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the moving funds tx max total fee update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeMovingFundsTxMaxTotalFeeUpdate() external onlyOwner {
+    function finalizeMovingFundsTxMaxTotalFeeUpdate() external {
         (
             ,
             uint64 movingFundsDustThreshold,
@@ -857,7 +835,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newMovingFundsDustThreshold New moving funds dust threshold.
     function beginMovingFundsDustThresholdUpdate(
         uint64 _newMovingFundsDustThreshold
-    ) external onlyOwner {
+    ) external {
         movingFundsData.beginMovingFundsDustThresholdUpdate(
             _newMovingFundsDustThreshold
         );
@@ -866,7 +844,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the moving funds dust threshold update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeMovingFundsDustThresholdUpdate() external onlyOwner {
+    function finalizeMovingFundsDustThresholdUpdate() external {
         (
             uint64 movingFundsTxMaxTotalFee,
             ,
@@ -906,7 +884,7 @@ contract BridgeGovernance is Ownable {
     ///         delay.
     function beginMovingFundsTimeoutResetDelayUpdate(
         uint32 _newMovingFundsTimeoutResetDelay
-    ) external onlyOwner {
+    ) external {
         movingFundsData.beginMovingFundsTimeoutResetDelayUpdate(
             _newMovingFundsTimeoutResetDelay
         );
@@ -915,7 +893,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the moving funds timeout reset delay update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeMovingFundsTimeoutResetDelayUpdate() external onlyOwner {
+    function finalizeMovingFundsTimeoutResetDelayUpdate() external {
         (
             uint64 movingFundsTxMaxTotalFee,
             uint64 movingFundsDustThreshold,
@@ -954,7 +932,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newMovingFundsTimeout New moving funds timeout.
     function beginMovingFundsTimeoutUpdate(uint32 _newMovingFundsTimeout)
         external
-        onlyOwner
     {
         movingFundsData.beginMovingFundsTimeoutUpdate(_newMovingFundsTimeout);
     }
@@ -962,7 +939,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the moving funds timeout update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeMovingFundsTimeoutUpdate() external onlyOwner {
+    function finalizeMovingFundsTimeoutUpdate() external {
         (
             uint64 movingFundsTxMaxTotalFee,
             uint64 movingFundsDustThreshold,
@@ -999,7 +976,7 @@ contract BridgeGovernance is Ownable {
     ///         slashing amount.
     function beginMovingFundsTimeoutSlashingAmountUpdate(
         uint96 _newMovingFundsTimeoutSlashingAmount
-    ) external onlyOwner {
+    ) external {
         movingFundsData.beginMovingFundsTimeoutSlashingAmountUpdate(
             _newMovingFundsTimeoutSlashingAmount
         );
@@ -1010,7 +987,6 @@ contract BridgeGovernance is Ownable {
     ///      delay elapses.
     function finalizeMovingFundsTimeoutSlashingAmountUpdate()
         external
-        onlyOwner
     {
         (
             uint64 movingFundsTxMaxTotalFee,
@@ -1052,7 +1028,7 @@ contract BridgeGovernance is Ownable {
     ///         timeout notifier reward multiplier.
     function beginMovingFundsTimeoutNotifierRewardMultiplierUpdate(
         uint32 _newMovingFundsTimeoutNotifierRewardMultiplier
-    ) external onlyOwner {
+    ) external {
         movingFundsData.beginMovingFundsTimeoutNotifierRewardMultiplierUpdate(
             _newMovingFundsTimeoutNotifierRewardMultiplier
         );
@@ -1064,7 +1040,6 @@ contract BridgeGovernance is Ownable {
     ///      delay elapses.
     function finalizeMovingFundsTimeoutNotifierRewardMultiplierUpdate()
         external
-        onlyOwner
     {
         (
             uint64 movingFundsTxMaxTotalFee,
@@ -1106,7 +1081,7 @@ contract BridgeGovernance is Ownable {
     ///        gas offset.
     function beginMovingFundsCommitmentGasOffsetUpdate(
         uint16 _newMovingFundsCommitmentGasOffset
-    ) external onlyOwner {
+    ) external {
         movingFundsData.beginMovingFundsCommitmentGasOffsetUpdate(
             _newMovingFundsCommitmentGasOffset
         );
@@ -1115,7 +1090,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the moving funds commitment gas offset update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeMovingFundsCommitmentGasOffsetUpdate() external onlyOwner {
+    function finalizeMovingFundsCommitmentGasOffsetUpdate() external {
         (
             uint64 movingFundsTxMaxTotalFee,
             uint64 movingFundsDustThreshold,
@@ -1155,7 +1130,7 @@ contract BridgeGovernance is Ownable {
     ///         fee.
     function beginMovedFundsSweepTxMaxTotalFeeUpdate(
         uint64 _newMovedFundsSweepTxMaxTotalFee
-    ) external onlyOwner {
+    ) external {
         movingFundsData.beginMovedFundsSweepTxMaxTotalFeeUpdate(
             _newMovedFundsSweepTxMaxTotalFee
         );
@@ -1164,7 +1139,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the moved funds sweep tx max total fee update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeMovedFundsSweepTxMaxTotalFeeUpdate() external onlyOwner {
+    function finalizeMovedFundsSweepTxMaxTotalFeeUpdate() external {
         (
             uint64 movingFundsTxMaxTotalFee,
             uint64 movingFundsDustThreshold,
@@ -1203,7 +1178,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newMovedFundsSweepTimeout New moved funds sweep timeout.
     function beginMovedFundsSweepTimeoutUpdate(
         uint32 _newMovedFundsSweepTimeout
-    ) external onlyOwner {
+    ) external {
         movingFundsData.beginMovedFundsSweepTimeoutUpdate(
             _newMovedFundsSweepTimeout
         );
@@ -1212,7 +1187,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the moved funds sweep timeout update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeMovedFundsSweepTimeoutUpdate() external onlyOwner {
+    function finalizeMovedFundsSweepTimeoutUpdate() external {
         (
             uint64 movingFundsTxMaxTotalFee,
             uint64 movingFundsDustThreshold,
@@ -1250,7 +1225,7 @@ contract BridgeGovernance is Ownable {
     ///         timeout slashing amount.
     function beginMovedFundsSweepTimeoutSlashingAmountUpdate(
         uint96 _newMovedFundsSweepTimeoutSlashingAmount
-    ) external onlyOwner {
+    ) external {
         movingFundsData.beginMovedFundsSweepTimeoutSlashingAmountUpdate(
             _newMovedFundsSweepTimeoutSlashingAmount
         );
@@ -1262,7 +1237,6 @@ contract BridgeGovernance is Ownable {
     ///      delay elapses.
     function finalizeMovedFundsSweepTimeoutSlashingAmountUpdate()
         external
-        onlyOwner
     {
         (
             uint64 movingFundsTxMaxTotalFee,
@@ -1304,7 +1278,7 @@ contract BridgeGovernance is Ownable {
     ///         sweep timeout notifier reward multiplier.
     function beginMovedFundsSweepTimeoutNotifierRewardMultiplierUpdate(
         uint32 _newMovedFundsSweepTimeoutNotifierRewardMultiplier
-    ) external onlyOwner {
+    ) external {
         movingFundsData
             .beginMovedFundsSweepTimeoutNotifierRewardMultiplierUpdate(
                 _newMovedFundsSweepTimeoutNotifierRewardMultiplier
@@ -1317,7 +1291,6 @@ contract BridgeGovernance is Ownable {
     ///      delay elapses.
     function finalizeMovedFundsSweepTimeoutNotifierRewardMultiplierUpdate()
         external
-        onlyOwner
     {
         (
             uint64 movingFundsTxMaxTotalFee,
@@ -1360,7 +1333,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newWalletCreationPeriod New wallet creation period.
     function beginWalletCreationPeriodUpdate(uint32 _newWalletCreationPeriod)
         external
-        onlyOwner
     {
         walletData.beginWalletCreationPeriodUpdate(_newWalletCreationPeriod);
     }
@@ -1368,7 +1340,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the wallet creation period update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeWalletCreationPeriodUpdate() external onlyOwner {
+    function finalizeWalletCreationPeriodUpdate() external {
         (
             ,
             uint64 walletCreationMinBtcBalance,
@@ -1396,7 +1368,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newWalletCreationMinBtcBalance New wallet creation min btc balance.
     function beginWalletCreationMinBtcBalanceUpdate(
         uint64 _newWalletCreationMinBtcBalance
-    ) external onlyOwner {
+    ) external {
         walletData.beginWalletCreationMinBtcBalanceUpdate(
             _newWalletCreationMinBtcBalance
         );
@@ -1405,7 +1377,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the wallet creation min btc balance update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeWalletCreationMinBtcBalanceUpdate() external onlyOwner {
+    function finalizeWalletCreationMinBtcBalanceUpdate() external {
         (
             uint32 walletCreationPeriod,
             ,
@@ -1435,7 +1407,7 @@ contract BridgeGovernance is Ownable {
     ///         balance.
     function beginWalletCreationMaxBtcBalanceUpdate(
         uint64 _newWalletCreationMaxBtcBalance
-    ) external onlyOwner {
+    ) external {
         walletData.beginWalletCreationMaxBtcBalanceUpdate(
             _newWalletCreationMaxBtcBalance
         );
@@ -1444,7 +1416,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the wallet creation max btc balance update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeWalletCreationMaxBtcBalanceUpdate() external onlyOwner {
+    function finalizeWalletCreationMaxBtcBalanceUpdate() external {
         (
             uint32 walletCreationPeriod,
             uint64 walletCreationMinBtcBalance,
@@ -1473,7 +1445,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newWalletClosureMinBtcBalance New wallet closure min btc balance.
     function beginWalletClosureMinBtcBalanceUpdate(
         uint64 _newWalletClosureMinBtcBalance
-    ) external onlyOwner {
+    ) external {
         walletData.beginWalletClosureMinBtcBalanceUpdate(
             _newWalletClosureMinBtcBalance
         );
@@ -1482,7 +1454,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the wallet closure min btc balance update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeWalletClosureMinBtcBalanceUpdate() external onlyOwner {
+    function finalizeWalletClosureMinBtcBalanceUpdate() external {
         (
             uint32 walletCreationPeriod,
             uint64 walletCreationMinBtcBalance,
@@ -1511,7 +1483,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newWalletMaxAge New wallet max age.
     function beginWalletMaxAgeUpdate(uint32 _newWalletMaxAge)
         external
-        onlyOwner
     {
         walletData.beginWalletMaxAgeUpdate(_newWalletMaxAge);
     }
@@ -1519,7 +1490,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the wallet max age update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeWalletMaxAgeUpdate() external onlyOwner {
+    function finalizeWalletMaxAgeUpdate() external {
         (
             uint32 walletCreationPeriod,
             uint64 walletCreationMinBtcBalance,
@@ -1547,7 +1518,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newWalletMaxBtcTransfer New wallet max btc transfer.
     function beginWalletMaxBtcTransferUpdate(uint64 _newWalletMaxBtcTransfer)
         external
-        onlyOwner
     {
         walletData.beginWalletMaxBtcTransferUpdate(_newWalletMaxBtcTransfer);
     }
@@ -1555,7 +1525,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the wallet max btc transfer amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeWalletMaxBtcTransferUpdate() external onlyOwner {
+    function finalizeWalletMaxBtcTransferUpdate() external {
         (
             uint32 walletCreationPeriod,
             uint64 walletCreationMinBtcBalance,
@@ -1583,7 +1553,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newWalletClosingPeriod New wallet closing period.
     function beginWalletClosingPeriodUpdate(uint32 _newWalletClosingPeriod)
         external
-        onlyOwner
     {
         walletData.beginWalletClosingPeriodUpdate(_newWalletClosingPeriod);
     }
@@ -1591,7 +1560,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the wallet closing period update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeWalletClosingPeriodUpdate() external onlyOwner {
+    function finalizeWalletClosingPeriodUpdate() external {
         (
             uint32 walletCreationPeriod,
             uint64 walletCreationMinBtcBalance,
@@ -1621,7 +1590,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newFraudChallengeDepositAmount New fraud challenge deposit amount.
     function beginFraudChallengeDepositAmountUpdate(
         uint96 _newFraudChallengeDepositAmount
-    ) external onlyOwner {
+    ) external {
         fraudData.beginFraudChallengeDepositAmountUpdate(
             _newFraudChallengeDepositAmount
         );
@@ -1630,7 +1599,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the fraud challenge deposit amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeFraudChallengeDepositAmountUpdate() external onlyOwner {
+    function finalizeFraudChallengeDepositAmountUpdate() external {
         (
             ,
             uint32 fraudChallengeDefeatTimeout,
@@ -1653,7 +1622,7 @@ contract BridgeGovernance is Ownable {
     /// @param _newFraudChallengeDefeatTimeout New fraud challenge defeat timeout.
     function beginFraudChallengeDefeatTimeoutUpdate(
         uint32 _newFraudChallengeDefeatTimeout
-    ) external onlyOwner {
+    ) external {
         fraudData.beginFraudChallengeDefeatTimeoutUpdate(
             _newFraudChallengeDefeatTimeout
         );
@@ -1662,7 +1631,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the fraud challenge defeat timeout update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeFraudChallengeDefeatTimeoutUpdate() external onlyOwner {
+    function finalizeFraudChallengeDefeatTimeoutUpdate() external {
         (
             uint96 fraudChallengeDepositAmount,
             ,
@@ -1685,7 +1654,6 @@ contract BridgeGovernance is Ownable {
     /// @param _newFraudSlashingAmount New fraud slashing amount.
     function beginFraudSlashingAmountUpdate(uint96 _newFraudSlashingAmount)
         external
-        onlyOwner
     {
         fraudData.beginFraudSlashingAmountUpdate(_newFraudSlashingAmount);
     }
@@ -1693,7 +1661,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the fraud slashing amount update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeFraudSlashingAmountUpdate() external onlyOwner {
+    function finalizeFraudSlashingAmountUpdate() external {
         (
             uint96 fraudChallengeDepositAmount,
             uint32 fraudChallengeDefeatTimeout,
@@ -1716,7 +1684,7 @@ contract BridgeGovernance is Ownable {
     ///         multiplier.
     function beginFraudNotifierRewardMultiplierUpdate(
         uint32 _newFraudNotifierRewardMultiplier
-    ) external onlyOwner {
+    ) external {
         fraudData.beginFraudNotifierRewardMultiplierUpdate(
             _newFraudNotifierRewardMultiplier
         );
@@ -1725,7 +1693,7 @@ contract BridgeGovernance is Ownable {
     /// @notice Finalizes the fraud notifier reward multiplier update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeFraudNotifierRewardMultiplierUpdate() external onlyOwner {
+    function finalizeFraudNotifierRewardMultiplierUpdate() external {
         (
             uint96 fraudChallengeDepositAmount,
             uint32 fraudChallengeDefeatTimeout,
@@ -1749,14 +1717,14 @@ contract BridgeGovernance is Ownable {
     /// @dev Can be called only by the contract owner. It does not perform
     ///      any parameter validation.
     /// @param _newTreasury New treasury address.
-    function beginTreasuryUpdate(address _newTreasury) external onlyOwner {
+    function beginTreasuryUpdate(address _newTreasury) external {
         treasuryData.beginTreasuryUpdate(_newTreasury);
     }
 
     /// @notice Finalizes the treasury address update process.
     /// @dev Can be called only by the contract owner, after the governance
     ///      delay elapses.
-    function finalizeTreasuryUpdate() external onlyOwner {
+    function finalizeTreasuryUpdate() external {
         address newTreasury = treasuryData.newTreasury;
         treasuryData.finalizeTreasuryUpdate(governanceDelay());
         bridge.updateTreasury(newTreasury);

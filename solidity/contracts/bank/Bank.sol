@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -301,7 +288,7 @@ contract Bank is Ownable {
     function increaseBalances(
         address[] calldata recipients,
         uint256[] calldata amounts
-    ) external onlyBridge {
+    ) external {
         require(
             recipients.length == amounts.length,
             "Arrays must have the same length"
@@ -319,7 +306,6 @@ contract Bank is Ownable {
     /// @param amount Amount by which the balance is increased.
     function increaseBalance(address recipient, uint256 amount)
         external
-        onlyBridge
     {
         _increaseBalance(recipient, amount);
     }
@@ -337,7 +323,7 @@ contract Bank is Ownable {
         address vault,
         address[] calldata recipients,
         uint256[] calldata amounts
-    ) external onlyBridge {
+    ) external {
         require(
             recipients.length == amounts.length,
             "Arrays must have the same length"

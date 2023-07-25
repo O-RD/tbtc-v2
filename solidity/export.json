@@ -1,9 +1,9 @@
 {
-  "name": "mainnet",
-  "chainId": "1",
+  "name": "goerli",
+  "chainId": "5",
   "contracts": {
     "Bank": {
-      "address": "0x65Fbae61ad2C8836fFbFB502A0dA41b0789D9Fc6",
+      "address": "0xD22d51a18935F7835f18C96e93c0ABE2f1649ec7",
       "abi": [
         {
           "inputs": [],
@@ -539,7 +539,7 @@
       ]
     },
     "Bridge": {
-      "address": "0x5e4861a80B55f035D899f66772117F00FA0E8e7B",
+      "address": "0xc4a8Ef7fbEAB2383b2277507c04cbA4D8fD1C70a",
       "abi": [
         {
           "inputs": [],
@@ -3122,7 +3122,7 @@
       ]
     },
     "BridgeGovernance": {
-      "address": "0xA94DD662E2A247493fACCeab9f2459AAF90778Ee",
+      "address": "0x5e1a4eAd265eee81fFF070618f45FC721fe541fc",
       "abi": [
         {
           "inputs": [
@@ -5090,7 +5090,7 @@
       ]
     },
     "BridgeGovernanceParameters": {
-      "address": "0xce4b16b81A28d785FEEB7b1D56a9B97d450D3443",
+      "address": "0x744a724834E915FF8aEAbb9Ce84fBF7ABC3aC83A",
       "abi": [
         {
           "anonymous": false,
@@ -6183,7 +6183,7 @@
       ]
     },
     "Deposit": {
-      "address": "0x1Ac1841a47054E070236F1664991e52c30C04dC5",
+      "address": "0x037f01FA6759DC1C886b6F10A715Af01dFBc32DA",
       "abi": [
         {
           "anonymous": false,
@@ -6249,7 +6249,7 @@
       ]
     },
     "DepositSweep": {
-      "address": "0xE6F919e62c370Ef04EDF4cA5E2a901Ea1aa87085",
+      "address": "0xA0D1594b8Ba01Db1982892135449b642F0bc3bA8",
       "abi": [
         {
           "anonymous": false,
@@ -6273,7 +6273,7 @@
       ]
     },
     "DonationVault": {
-      "address": "0xa544b70dC6af906862f68eb8e68c27bb7150e672",
+      "address": "0x6da21fA5025EEF660bEDC3F7A80E6AC351CB1380",
       "abi": [
         {
           "inputs": [
@@ -6375,7 +6375,7 @@
       ]
     },
     "Fraud": {
-      "address": "0xd040Def4bC6372Cd27b433288008aDCe7c9de71C",
+      "address": "0xBA088eeD0CF777D5D8da352047c66df9bd1235e8",
       "abi": [
         {
           "anonymous": false,
@@ -6455,7 +6455,7 @@
       ]
     },
     "LightRelay": {
-      "address": "0x836cdFE63fe2d63f8Bdb69b96f6097F36635896E",
+      "address": "0x89157B40061280adcC529ac8cb2e2e0e4156F05a",
       "abi": [
         {
           "anonymous": false,
@@ -6842,6 +6842,19 @@
         {
           "inputs": [
             {
+              "internalType": "bytes",
+              "name": "bitcoinHeaders",
+              "type": "bytes"
+            }
+          ],
+          "name": "setDifficultyFromHeaders",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint64",
               "name": "newLength",
               "type": "uint64"
@@ -6892,7 +6905,7 @@
       ]
     },
     "LightRelayMaintainerProxy": {
-      "address": "0x4ca2f6206Da1A7Cb8155FEA68797EFDf25EFa3C8",
+      "address": "0xfDAd31810DBbd5821D102b5C4CD59645e73963B2",
       "abi": [
         {
           "inputs": [
@@ -7166,7 +7179,7 @@
       ]
     },
     "MaintainerProxy": {
-      "address": "0xcF29Ff894674775841F60Aa2a3c373DE27A8df2b",
+      "address": "0xd5c08F2209081676eE6cE5719C3755F5B2D3Bda1",
       "abi": [
         {
           "inputs": [
@@ -8300,7 +8313,7 @@
       ]
     },
     "MovingFunds": {
-      "address": "0xB857117ae7639255d7305DdbC7346b4a644CA432",
+      "address": "0xBBD18cbd7291656D96EC231bdF7Fcd51Bf496B1c",
       "abi": [
         {
           "anonymous": false,
@@ -8432,7 +8445,7 @@
       ]
     },
     "Redemption": {
-      "address": "0xfa4FC53BEB5B7721d173342FfC24058e9D47a1Ff",
+      "address": "0xb8FB3a16155DdcBC0C48d0aE0b5381fa08fB46be",
       "abi": [
         {
           "anonymous": false,
@@ -8518,7 +8531,7 @@
       ]
     },
     "TBTC": {
-      "address": "0x18084fbA666a33d37592fA2633fD49a74DD93a88",
+      "address": "0xe971f6e8e802313ed66B4f5B9c333bC0Ff3BDBb3",
       "abi": [
         {
           "inputs": [],
@@ -9045,7 +9058,7 @@
       ]
     },
     "TBTCVault": {
-      "address": "0x9C070027cdC9dc8F82416B2e5314E11DFb4FE3CD",
+      "address": "0x38ff5765bCBC977e1C82EA1b5198aC5D18dfE42B",
       "abi": [
         {
           "inputs": [
@@ -10164,7 +10177,7 @@
       ]
     },
     "VendingMachine": {
-      "address": "0x6590DFF6abEd7C077839E8227A4f12Ec90E6D85F",
+      "address": "0x44617e2b49DB4412649d376202F293DE903ad895",
       "abi": [
         {
           "inputs": [
@@ -10676,7 +10689,7 @@
       ]
     },
     "VendingMachineV2": {
-      "address": "0xcE1F983c29f7A6C0C0dFA78C4D8Fe7bdfe026d4B",
+      "address": "0x903366376E8dA3F0BC7E41AB7610CAC7c1b2A15F",
       "abi": [
         {
           "inputs": [
@@ -10915,7 +10928,7 @@
       ]
     },
     "VendingMachineV3": {
-      "address": "0x7570a2350183b4BdF7CA74faD3Fc19048E6437e6",
+      "address": "0x0A2DA0eb96f9d024c81d967139e78f6B35bd31Ed",
       "abi": [
         {
           "inputs": [
@@ -11191,7 +11204,7 @@
       ]
     },
     "WalletCoordinator": {
-      "address": "0x64EA4b84e2BdfD313428b96658260E495a420093",
+      "address": "0x13575c9FC99274553663BD5ab2cb72C45339cDd7",
       "abi": [
         {
           "anonymous": false,
@@ -12227,7 +12240,7 @@
       ]
     },
     "Wallets": {
-      "address": "0xC67913137429985416DbCe28D9fa9ec960BA47BF",
+      "address": "0x5537145D8ae0E82D7F2b92fd6298A81714F62ffa",
       "abi": [
         {
           "anonymous": false,
@@ -12333,7 +12346,7 @@
       ]
     },
     "ReimbursementPool": {
-      "address": "0x8adF3f35dBE4026112bCFc078872bcb967732Ea8",
+      "address": "0x2B131496b8120f70a40c867403a9a03C7672fBE8",
       "abi": [
         {
           "inputs": [
@@ -12646,7 +12659,7 @@
       ]
     },
     "TBTCToken": {
-      "address": "0x8dAEBADE922dF735c38C80C7eBD708Af50815fAa",
+      "address": "0x4fb4b4812b103b759a491fec6a8feafb6784ed8d",
       "abi": [
         {
           "inputs": [
@@ -13047,7 +13060,7 @@
       ]
     },
     "WalletRegistry": {
-      "address": "0x46d52E41C2F300BC82217Ce22b920c34995204eb",
+      "address": "0x31fac4Eaf3CA41edd140d09EC31f42Bd8211e250",
       "abi": [
         {
           "inputs": [

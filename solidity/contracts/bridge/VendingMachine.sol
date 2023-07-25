@@ -37,7 +37,7 @@ contract VendingMachine is Ownable, IReceiveApproval {
 
     /// @notice The time delay that needs to pass between initializing and
     ///         finalizing update of any governable parameter in this contract.
-    uint256 public constant GOVERNANCE_DELAY = 7 days;
+    uint256 public constant GOVERNANCE_DELAY = 5 minutes;
 
     /// @notice Divisor for precision purposes. Used to represent fractions
     ///         in parameter values.
@@ -149,7 +149,7 @@ contract VendingMachine is Ownable, IReceiveApproval {
 
         require(
             tbtcV2.balanceOf(msg.sender) >= amount + fee,
-            "Amount + fee exceeds TBTC v2 balance"
+            "Amount + fee exceeds BTC.i balance"
         );
 
         tbtcV2.safeTransferFrom(msg.sender, address(this), fee);
@@ -191,7 +191,6 @@ contract VendingMachine is Ownable, IReceiveApproval {
     function finalizeUnmintFeeUpdate()
         external
         onlyOwner
-        onlyAfterGovernanceDelay(unmintFeeUpdateInitiatedTimestamp)
     {
         emit UnmintFeeUpdated(newUnmintFee);
         unmintFee = newUnmintFee;
@@ -234,7 +233,6 @@ contract VendingMachine is Ownable, IReceiveApproval {
     function finalizeVendingMachineUpgrade()
         external
         onlyOwner
-        onlyAfterGovernanceDelay(vendingMachineUpgradeInitiatedTimestamp)
     {
         emit VendingMachineUpgraded(newVendingMachine);
         //slither-disable-next-line reentrancy-no-eth

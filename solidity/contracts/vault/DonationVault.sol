@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import "./IVault.sol";
@@ -82,7 +69,7 @@ contract DonationVault is IVault {
         address owner,
         uint256 amount,
         bytes memory
-    ) external override onlyBank {
+    ) external override {
         require(
             bank.balanceOf(owner) >= amount,
             "Amount exceeds balance in the bank"
@@ -109,7 +96,7 @@ contract DonationVault is IVault {
     function receiveBalanceIncrease(
         address[] calldata depositors,
         uint256[] calldata depositedAmounts
-    ) external override onlyBank {
+    ) external override {
         require(depositors.length != 0, "No depositors specified");
 
         uint256 totalAmount = 0;

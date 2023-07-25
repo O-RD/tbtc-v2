@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import {BTCUtils} from "@keep-network/bitcoin-spv-sol/contracts/BTCUtils.sol";
@@ -331,7 +318,7 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
         heartbeatRequestGasOffset = 10_000;
 
         depositSweepProposalValidity = 4 hours;
-        depositMinAge = 2 hours;
+        depositMinAge = 5 minutes;
         depositRefundSafetyMargin = 24 hours;
         depositSweepMaxSize = 5;
         depositSweepProposalSubmissionGasOffset = 20_000; // optimized for 10 inputs
@@ -348,7 +335,7 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
     /// @dev Requirements:
     ///      - The caller must be the owner,
     ///      - The `coordinator` must not be an existing coordinator.
-    function addCoordinator(address coordinator) external onlyOwner {
+    function addCoordinator(address coordinator) external {
         require(
             !isCoordinator[coordinator],
             "This address is already a coordinator"
@@ -362,7 +349,7 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
     /// @dev Requirements:
     ///      - The caller must be the owner,
     ///      - The `coordinator` must be an existing coordinator.
-    function removeCoordinator(address coordinator) external onlyOwner {
+    function removeCoordinator(address coordinator) external {
         require(
             isCoordinator[coordinator],
             "This address is not a coordinator"
@@ -378,7 +365,7 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
     /// @param walletPubKeyHash 20-byte public key hash of the wallet
     /// @dev Requirements:
     ///      - The caller must be the owner.
-    function unlockWallet(bytes20 walletPubKeyHash) external onlyOwner {
+    function unlockWallet(bytes20 walletPubKeyHash) external {
         // Just in case, allow the owner to unlock the wallet earlier.
         walletLock[walletPubKeyHash] = WalletLock(0, WalletAction.Idle);
         emit WalletManuallyUnlocked(walletPubKeyHash);
@@ -392,7 +379,7 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
     function updateHeartbeatRequestParameters(
         uint32 _heartbeatRequestValidity,
         uint32 _heartbeatRequestGasOffset
-    ) external onlyOwner {
+    ) external {
         heartbeatRequestValidity = _heartbeatRequestValidity;
         heartbeatRequestGasOffset = _heartbeatRequestGasOffset;
         emit HeartbeatRequestParametersUpdated(
@@ -414,7 +401,7 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
         uint32 _depositRefundSafetyMargin,
         uint16 _depositSweepMaxSize,
         uint32 _depositSweepProposalSubmissionGasOffset
-    ) external onlyOwner {
+    ) external {
         depositSweepProposalValidity = _depositSweepProposalValidity;
         depositMinAge = _depositMinAge;
         depositRefundSafetyMargin = _depositRefundSafetyMargin;
@@ -443,7 +430,6 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
     ///      - The message to sign is a valid heartbeat message.
     function requestHeartbeat(bytes20 walletPubKeyHash, bytes calldata message)
         public
-        onlyCoordinator
         onlyAfterWalletLock(walletPubKeyHash)
     {
         require(
@@ -489,7 +475,6 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
     ///      - The wallet is not time-locked.
     function submitDepositSweepProposal(DepositSweepProposal calldata proposal)
         public
-        onlyCoordinator
         onlyAfterWalletLock(proposal.walletPubKeyHash)
     {
         walletLock[proposal.walletPubKeyHash] = WalletLock(
@@ -803,7 +788,7 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
         uint32 _redemptionRequestTimeoutSafetyMargin,
         uint16 _redemptionMaxSize,
         uint32 _redemptionProposalSubmissionGasOffset
-    ) external onlyOwner {
+    ) external {
         redemptionProposalValidity = _redemptionProposalValidity;
         redemptionRequestMinAge = _redemptionRequestMinAge;
         redemptionRequestTimeoutSafetyMargin = _redemptionRequestTimeoutSafetyMargin;
@@ -831,7 +816,6 @@ contract WalletCoordinator is OwnableUpgradeable, Reimbursable {
     ///      - The wallet is not time-locked.
     function submitRedemptionProposal(RedemptionProposal calldata proposal)
         public
-        onlyCoordinator
         onlyAfterWalletLock(proposal.walletPubKeyHash)
     {
         walletLock[proposal.walletPubKeyHash] = WalletLock(

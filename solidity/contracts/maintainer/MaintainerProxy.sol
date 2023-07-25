@@ -1,18 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-// ██████████████     ▐████▌     ██████████████
-// ██████████████     ▐████▌     ██████████████
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-//               ▐████▌    ▐████▌
-
 pragma solidity 0.8.17;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -180,7 +167,7 @@ contract MaintainerProxy is Ownable, Reimbursable {
         BitcoinTx.Proof calldata sweepProof,
         BitcoinTx.UTXO calldata mainUtxo,
         address vault
-    ) external onlySpvMaintainer {
+    ) external {
         uint256 gasStart = gasleft();
 
         bridge.submitDepositSweepProof(sweepTx, sweepProof, mainUtxo, vault);
@@ -199,7 +186,7 @@ contract MaintainerProxy is Ownable, Reimbursable {
         BitcoinTx.Proof calldata redemptionProof,
         BitcoinTx.UTXO calldata mainUtxo,
         bytes20 walletPubKeyHash
-    ) external onlySpvMaintainer {
+    ) external {
         uint256 gasStart = gasleft();
 
         bridge.submitRedemptionProof(
@@ -237,7 +224,7 @@ contract MaintainerProxy is Ownable, Reimbursable {
         BitcoinTx.Proof calldata movingFundsProof,
         BitcoinTx.UTXO calldata mainUtxo,
         bytes20 walletPubKeyHash
-    ) external onlySpvMaintainer {
+    ) external {
         uint256 gasStart = gasleft();
 
         bridge.submitMovingFundsProof(
@@ -259,7 +246,7 @@ contract MaintainerProxy is Ownable, Reimbursable {
     function notifyMovingFundsBelowDust(
         bytes20 walletPubKeyHash,
         BitcoinTx.UTXO calldata mainUtxo
-    ) external onlyWalletMaintainer {
+    ) external {
         uint256 gasStart = gasleft();
 
         bridge.notifyMovingFundsBelowDust(walletPubKeyHash, mainUtxo);
@@ -277,7 +264,7 @@ contract MaintainerProxy is Ownable, Reimbursable {
         BitcoinTx.Info calldata sweepTx,
         BitcoinTx.Proof calldata sweepProof,
         BitcoinTx.UTXO calldata mainUtxo
-    ) external onlySpvMaintainer {
+    ) external {
         uint256 gasStart = gasleft();
 
         bridge.submitMovedFundsSweepProof(sweepTx, sweepProof, mainUtxo);
@@ -293,7 +280,6 @@ contract MaintainerProxy is Ownable, Reimbursable {
     /// @dev See `Bridge.requestNewWallet` function documentation.
     function requestNewWallet(BitcoinTx.UTXO calldata activeWalletMainUtxo)
         external
-        onlyWalletMaintainer
     {
         uint256 gasStart = gasleft();
 
@@ -311,7 +297,7 @@ contract MaintainerProxy is Ownable, Reimbursable {
     function notifyWalletCloseable(
         bytes20 walletPubKeyHash,
         BitcoinTx.UTXO calldata walletMainUtxo
-    ) external onlyWalletMaintainer {
+    ) external {
         uint256 gasStart = gasleft();
 
         bridge.notifyWalletCloseable(walletPubKeyHash, walletMainUtxo);
@@ -327,7 +313,6 @@ contract MaintainerProxy is Ownable, Reimbursable {
     /// @dev See `Bridge.notifyWalletClosingPeriodElapsed` function documentation.
     function notifyWalletClosingPeriodElapsed(bytes20 walletPubKeyHash)
         external
-        onlyWalletMaintainer
     {
         uint256 gasStart = gasleft();
 
